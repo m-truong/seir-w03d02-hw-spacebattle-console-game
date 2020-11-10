@@ -11,15 +11,22 @@ let action = null;
 class GameState {
     // multiple instances of same game
     constructor(state) {
-        this.state = state;
+        this.state = state; // what to do with this?
+        this.alienships = new Mothership(); // WOW THIS WORKS 
+        this.nova = new Spaceship();
     }
     startGame() {
-        const mothership1 = new Mothership();
-        mothership1.generateShip(6);
-        console.log(mothership1.spaceships);
+        // ** changes gamestate to true
+        this.state = true;
+        // ** creates 6 alien spaceships
+        this.alienships.generateShip(6);
+        console.log(this.alienships.spaceships);
+
+
     }
     beginRound() {
         // spaceShip attks alien
+
         // if alien survives
         // alien attks back
         // if spaceShip survives 
@@ -57,7 +64,14 @@ class Spaceship {
     }
     // attacks the other ship 
     shootLasers(enemyShip) {
-        enemyShip.hull -= this.firepower; // this takes hitpoints AWAY from enemyShip
+        const chanceHit = Math.random();
+        console.log(chanceHit);
+        if (chanceHit <= this.accuracy) {
+            enemyShip.hull -= this.firepower; 
+        } else {
+            console.log("Attack missed!");
+            alert(`${this}'s attack missed ${enemyShip}`);
+        }
     }
 
 }
@@ -85,5 +99,6 @@ class Mothership {
 }
 
 // ===== START GAME HERE ===== //
-const game1 = new GameState(); 
-game1.startGame(); 
+const game1 = new GameState();
+game1.startGame();
+console.log(game1);
