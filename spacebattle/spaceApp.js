@@ -1,4 +1,3 @@
-let userAction = null;
 alert("You have now begun playing Space Battle! The instructions are simple. Keep playing until you've destroyed all the enemy alien ships! You must save Earth from Thanos' invading alien army!");
 
 /**
@@ -50,43 +49,46 @@ class Mothership {
     }
 }
 class GameState {
-    constructor(state) {
-        this.state = state;
+    constructor() {
+        this.userAction = null;
+        this.state = true;
+        this.iterable = 0;
         this.alienships = new Mothership();
         this.nova = new Spaceship();
-        this.iterable = 0;
-    }
 
-    startGame() {
-        // ** changes gamestate to true
-        this.state = true;
-        this.alienships.generateShip(6);
     }
-    beginGame() {
-        // let currAlien = this.alienships.spaceships[k];
-        while (userAction !== "s" && this.alienships.spaceships[this.iterable].hull > 0 && this.nova.hull > 0) {
-            alert(`There are ${this.alienships.spaceships.length - this.iterable} alien ships remaining!`);
-            // prompt user to attack //////// then alert() this is how many ships that are in front you
-            userAction = prompt("Do you want to attack the alien ship?", "Type 'y' to attack or 'n' to retreat");
+    startGame() {
+        this.alienships.generateShip(6);
+        console.log('%c Space Battle', 'font-size: 40px'); 
+        alert(`There are ${this.alienships.spaceships.length - this.iterable} alien ships remaining!`);
+
+
+        while (this.userAction !== "s" && this.state === true && this.alienships.spaceships[this.iterable].hull > 0 && this.nova.hull > 0) {
+
+
+            this.userAction = prompt("Do you want to attack the alien ship?", "Type 'y' to attack or 'n' to retreat");
 
             // if yes attack...
-            if (userAction === "y") {
+            if (this.userAction === "y") {
 
                 this.nova.shootLasers(this.alienships.spaceships[this.iterable]);
 
-                if (this.alienships.spaceships[this.iterable].hull <= 0) {
-                    alert(`The alien ship has been destroyed! Great Work!`);
-                } else if (this.alienships.spaceships[this.iterable].hull > 0) {
+                if (this.alienships.spaceships[this.iterable].hull > 0) {
                     alert(`The alien ship is attacking back!`);
                     this.alienships.spaceships[this.iterable].shootLasers(this.nova);
                     alert(`The USS Nova ship now has ${this.nova.hull} hitpoints remaining!`)
+
+                } else if (this.alienships.spaceships[this.iterable].hull <= 0) {
+                    alert(`The alien ship has been destroyed! Great Work!`);
                 }
 
-            } else if (userAction === "n" || this.nova.hull <= 0) {
+            } else if (this.userAction === "n") {
                 console.log(`Thank you for playing! You've ended the game!`);
-                alert("Game Over!");
-                location.reload();
+                alert(`Thank you for playing! You've ended the game!`);
+                this.state = false;
             }
+
+            this.checkNovaDestroyed(); 
 
             if (this.alienships.spaceships[this.iterable].hull <= 0) { // executes IF spaceship destroyed! 
 
@@ -99,22 +101,42 @@ class GameState {
 
                 } else if (userAction === "n") {
                     console.log(`Thank you for playing! You've ended the game!`);
-                    alert("Game Over!");
-                    location.reload();
+                    alert("Thank you for playing! You've ended the game!");
+                    this.state = false;
                 }
             }
+            this.checkGameVictory();
         }
     }
 
-    getNextShip() {
+    /**
+     * The checkGameVictory() is a function that checks if the player has reached 
+     * the end of the alien spaceships array and the Nova's hitpoints are above 0. 
+     * If so, the player is shown a winning message, and the game concludes. 
+     */
+    checkGameVictory() {
+        if (this.iterable === (this.alienships.spaceships.length-1) && this.nova.hull > 0) {
+            alert("Congratulations! You've destroyed Thanos' invading alien army and saved Earth!");
+        }
     }
-    shipDestroyedGameOver() {
+
+    checkNovaDestroyed() {
+        if (this.nova.hull <= 0) {
+            console.log('%c Oh no! The USSNova ship went ka-blooey and has been destroyed! But you can still save Earth! Would you like to play again?', 'font-style: italic; background: azure; border: 1px solid grey;');
+            const tempUserAction = prompt("Oh no! The USSNova ship went ka-blooey and has been destroyed! But you can still save Earth! Would you like to play again?", "Type 'y' to play again or 'n' to stop playing");
+            if (tempUserAction === "y") {
+                // refreshes page
+                location.reload();
+            } else if (tempUserAction === "n") {
+                // stops game
+                window.stop();
+            }
+        }
     }
-    continueAttack() {
-    }
-    continueAttackingNextShip() {
-    }
-    continuesBattleOnSingleShip(alien) {
+    shipDestroyedGameOver() {}
+    continueAttack() {}
+    continueAttackingNextShip() {}
+    continuesBattleOnSingleShip() {
         // too many helper functions or a loop 
     }
     gameReset() {
@@ -130,4 +152,3 @@ class GameState {
 // ====== START GAME HERE ====== //
 const game1 = new GameState();
 game1.startGame();
-game1.beginGame();
